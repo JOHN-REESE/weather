@@ -228,32 +228,50 @@ def main():
     
     args = parser.parse_args()
     
-    location_info = None
-    
     # 处理命令行参数
     if args.location:
         location_input = ' '.join(args.location).strip()
-    else:
-        location_input = None
+        # 如果有命令行参数，执行一次查询后退出
+        query_weather(location_input)
+        return
     
-    # 如果没有提供命令行参数，提示用户输入
-    if not location_input:
-        print("🌤️  天气预报查询工具")
-        print("=" * 40)
-        print("💡 支持输入:")
-        print("   • 城市名称: 北京, Shanghai, New York")
-        print("   • 坐标格式: 39.9042,116.4074")
-        print("-" * 40)
-        
+    # 交互模式 - 循环查询
+    print("🌤️  天气预报查询工具")
+    print("=" * 40)
+    print("💡 支持输入:")
+    print("   • 城市名称: 北京, Shanghai, New York")
+    print("   • 坐标格式: 39.9042,116.4074")
+    print("   • 输入 'quit' 或 'exit' 退出程序")
+    print("-" * 40)
+    
+    while True:
         try:
-            location_input = input("🏙️  请输入城市名称或坐标: ").strip()
+            location_input = input("\n🏙️  请输入城市名称或坐标: ").strip()
+            
+            # 检查退出命令
+            if location_input.lower() in ['quit', 'exit', 'q']:
+                print("\n👋 再见!")
+                break
+                
+            if not location_input:
+                print("❌ 输入不能为空，请重新输入")
+                continue
+                
+            # 执行查询
+            query_weather(location_input)
+            
+            # 询问是否继续
+            print("\n" + "-" * 40)
+            print("💡 按回车键继续查询，或输入 'quit' 退出")
+            
         except KeyboardInterrupt:
             print("\n\n👋 再见!")
-            return
-            
-        if not location_input:
-            print("❌ 输入不能为空")
-            return
+            break
+
+
+def query_weather(location_input):
+    """执行天气查询"""
+    location_info = None
     
     # 判断输入类型并获取坐标
     if is_coordinates(location_input):
